@@ -1,0 +1,139 @@
+\documentclass[11pt]{article}
+\usepackage[review]{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage{microtype}
+\usepackage{inconsolata}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{multirow}
+
+\title{Detecting Political Evasion in Brazilian Portuguese Interviews:\\
+A Corpus Study with Automatic Methods}
+
+\author{Anonymous}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Political evasion---the practice of avoiding direct answers to interview questions---is a pervasive discourse strategy, yet its automatic detection remains largely unexplored for Brazilian Portuguese. We present a new annotated corpus of 276 question-answer pairs extracted from the \textit{Roda Viva} political interview program, labeled across three categories: \textsc{responds}, \textsc{partial}, and \textsc{evades}. We benchmark five automatic methods: cosine similarity over sentence embeddings, Natural Language Inference (NLI), and three prompting strategies with large language models (LLMs)---zero-shot, few-shot, and chain-of-thought. All methods yield low agreement with human annotation (best Cohen's $\kappa = 0.146$), with LLMs exhibiting a systematic \textsc{evades} bias. Few-shot prompting with Claude Haiku outperforms larger models and more complex prompting strategies, suggesting that this pragmatic task remains a fundamental challenge for current NLP systems.
+\end{abstract}
+
+\section{Introduction}
+
+Political interviews are a privileged site of democratic accountability, where journalists press officials to commit to positions, explain decisions, and respond to criticism. Politicians, in turn, frequently deploy evasion strategies to avoid direct answers \cite{bull1994politician,clayman2001answers}. Automatically detecting such evasion would benefit political scientists, journalists, and fact-checkers, yet progress in NLP has been limited---particularly for languages other than English.
+
+Brazilian Portuguese presents an especially interesting case. The \textit{Roda Viva} program, broadcast since 1986, is one of the most prominent political interview formats in Brazil, featuring a panel of journalists interviewing politicians and public figures. Despite its cultural and political significance, no annotated resource exists for analyzing response strategies in this context.
+
+This paper makes three contributions: (1) we release a dataset of 276 annotated question-answer pairs from \textit{Roda Viva} transcripts; (2) we benchmark five automatic methods for the evasion detection task; and (3) we document a systematic \textsc{evades} bias in state-of-the-art LLMs and analyze its causes. Our results show that while few-shot prompting yields the best results, the task remains substantially unsolved, motivating further work on pragmatic NLP for political discourse.
+
+\section{Related Work}
+
+\paragraph{Political evasion in discourse analysis.}
+The study of political evasion has a long tradition in discourse analysis. \citet{bull1994politician} identify over 30 types of non-replies in British political interviews, ranging from topic deflection to attacking the question. \citet{clayman2001answers} analyze evasion as an interactional achievement involving both interviewer and interviewee. More recent work distinguishes between \textit{complete evasion} (ignoring the question entirely), \textit{partial responses} (addressing peripheral aspects), and \textit{direct responses} \cite{rasiah2010taxonomic}---a trichotomy we adopt in our annotation scheme.
+
+\paragraph{NLP approaches to evasion detection.}
+Computational approaches to political evasion remain scarce. \citet{kenyon2018sentiment} study sentiment in Canadian political speech but do not address evasion specifically. \citet{louis2018argument} examine response quality in debate contexts. More recently, \citet{gilardi2023chatgpt} and \citet{tornberg2023chatgpt} demonstrate that LLMs can match or exceed crowd workers in political text annotation tasks, motivating our LLM-based experiments. Our work differs in focusing on a low-resource language and a fine-grained three-way pragmatic distinction.
+
+\paragraph{LLMs for text classification.}
+Few-shot prompting has emerged as a competitive approach for text classification \cite{brown2020language}. \citet{wei2022chain} introduce chain-of-thought prompting to improve reasoning in LLMs. For political annotation specifically, recent work shows that prompt engineering---including example selection and instruction phrasing---substantially affects performance \cite{gilardi2023chatgpt}, a finding our experiments corroborate.
+
+\section{Corpus and Annotation}
+
+\paragraph{Source data.}
+We use transcripts from the \textit{Roda Viva} corpus \cite{rodaviva2023}, a collection of political interview transcripts from the eponymous Brazilian television program. The corpus covers multiple politicians across different political periods, providing diverse discourse styles and topics.
+
+\paragraph{Pair extraction.}
+We extract question-answer (Q-A) pairs using a heuristic pipeline that identifies journalist turns (questions) followed by politician turns (responses). Speaker turns are identified via transcript formatting, with journalist questions detected through interrogative markers and punctuation. This yielded 276 pairs distributed across 10 politicians, including presidents, governors, and ministers.
+
+\paragraph{Annotation scheme.}
+Each Q-A pair was annotated by a trained linguist according to three categories:
+\begin{itemize}
+  \item \textsc{responds}: the politician directly addresses the central point of the question;
+  \item \textsc{partial}: the politician addresses the topic but avoids key aspects or introduces significant digressions;
+  \item \textsc{evades}: the politician redirects to a different topic, responds to a different question, or uses rhetorical strategies to avoid the central point.
+\end{itemize}
+
+The final distribution is: \textsc{responds} = 154 (55.8\%), \textsc{partial} = 100 (36.2\%), \textsc{evades} = 22 (8.0\%). The low proportion of \textsc{evades} reflects that complete evasion is relatively rare; most non-responses are partial.
+
+\section{Methods}
+
+We evaluate five automatic methods for the three-way classification task.
+
+\paragraph{M1: Cosine similarity.}
+We encode questions and responses using a multilingual sentence embedding model (\texttt{paraphrase-multilingual-mpnet-base-v2}) \cite{reimers2019sentence} and compute cosine similarity. Higher similarity is taken to indicate a more direct response. Thresholds $\theta_1 = 0.5$ (for \textsc{responds}) and $\theta_2 = 0.3$ (for \textsc{partial}) were set on a held-out development set.
+
+\paragraph{M2: NLI zero-shot.}
+We formulate the task as natural language inference using \texttt{mDeBERTa-v3-base-xnli} \cite{laurer2022mDeBERTa}, a multilingual model trained on cross-lingual NLI. The response is treated as the premise; candidate labels (\textit{``responde à pergunta''}, \textit{``responde parcialmente''}, \textit{``esquiva da pergunta''}) serve as hypotheses.
+
+\paragraph{M3a: LLM zero-shot.}
+We prompt Claude Haiku (claude-haiku-4-5-20251001) with a task description and category definitions in Portuguese, asking for a single-word classification. No examples are provided.
+
+\paragraph{M3b: LLM few-shot.}
+We extend M3a with six in-context examples (two per class) drawn from a held-out portion of the corpus. Examples were selected to cover typical patterns in each category, including cases where elaborate answers qualify as \textsc{responds} and short answers qualify as \textsc{evades}.
+
+\paragraph{M3c: LLM few-shot (larger model).}
+We replicate M3b using Claude Sonnet (claude-sonnet-4-6), a larger model from the same family, to assess whether scale improves performance on this pragmatic task.
+
+\section{Results}
+
+Table~\ref{tab:results} reports precision, recall, F1, macro-averaged F1, and Cohen's $\kappa$ for all methods. All methods yield low overall agreement with human annotation, with $\kappa$ ranging from $-0.032$ to $0.146$.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lcccccccc}
+\toprule
+\multirow{2}{*}{\textbf{Method}} & \multicolumn{2}{c}{\textsc{responds}} & \multicolumn{2}{c}{\textsc{partial}} & \multicolumn{2}{c}{\textsc{evades}} & \multirow{2}{*}{\textbf{Macro F1}} & \multirow{2}{*}{$\boldsymbol{\kappa}$} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+ & P & F1 & P & F1 & P & F1 & & \\
+\midrule
+M1: Cosine similarity   & 0.617 & 0.560 & 0.374 & 0.386 & 0.073 & 0.095 & 0.347 & 0.053 \\
+M2: NLI (mDeBERTa)      & 0.312 & 0.059 & 0.353 & 0.508 & 0.500 & 0.083 & 0.217 & $-$0.032 \\
+M3a: Haiku zero-shot    & 0.829 & 0.307 & 0.306 & 0.256 & 0.118 & 0.209 & 0.257 & 0.055 \\
+M3b: Haiku few-shot     & 0.833 & 0.433 & 0.408 & 0.414 & 0.160 & 0.270 & \textbf{0.372} & \textbf{0.146} \\
+M3c: Sonnet few-shot    & 0.778 & 0.452 & 0.350 & 0.382 & 0.204 & 0.330 & 0.388 & 0.126 \\
+\bottomrule
+\end{tabular}
+\caption{Results for all methods. P = Precision; F1 = F1-score per class. Best $\kappa$ in \textbf{bold}.}
+\label{tab:results}
+\end{table*}
+
+\paragraph{Cosine similarity (M1)} achieves the highest F1 for \textsc{responds} (0.560) despite its simplicity, but almost completely fails on \textsc{evades} (F1 = 0.095). This suggests that topical overlap between question and response is a weak signal for distinguishing \textsc{evades} from \textsc{partial}.
+
+\paragraph{NLI (M2)} collapses nearly all predictions into \textsc{partial} (258 of 276), yielding $\kappa = -0.032$, below chance. The NLI formulation---treating candidate labels as hypotheses entailed by the response---appears ill-suited for this task, as responses do not entail their own meta-description.
+
+\paragraph{LLM zero-shot (M3a)} shows very high precision for \textsc{responds} (0.829) but low recall (0.188), indicating that the model is conservative about labeling responses as direct. Most errors consist of classifying \textsc{responds} instances as \textsc{evades} (77 of 154 cases).
+
+\paragraph{Few-shot prompting (M3b)} substantially improves over zero-shot, increasing $\kappa$ from 0.055 to 0.146 and macro F1 from 0.257 to 0.372. The \textsc{partial} category shows the largest gain (F1: 0.256 $\to$ 0.414), suggesting that examples are critical for this intermediate and pragmatically ambiguous class.
+
+\paragraph{Larger model (M3c)} achieves similar $\kappa$ (0.126) and slightly higher macro F1 (0.388) than M3b. Crucially, the Haiku few-shot model outperforms the Sonnet few-shot model in $\kappa$, showing that scale does not compensate for prompt quality on this task.
+
+\section{Analysis}
+
+\paragraph{Systematic \textsc{evades} bias.}
+All LLM-based methods over-predict \textsc{evades}: Haiku zero-shot predicts 169 instances (vs.\ 22 gold), Haiku few-shot predicts 119, and Sonnet few-shot predicts 93. This bias persists despite few-shot examples illustrating direct responses. We hypothesize that models encode a prior---likely reflecting discourse about politicians in training data---that political speech is generally evasive, overriding evidence from the response itself.
+
+\paragraph{Confusable categories.}
+Error analysis reveals three recurring confusion patterns. First, elaborate responses that address the question indirectly are systematically classified as \textsc{evades}. For instance, a politician's extended historical explanation in response to a question about governance is labeled \textsc{responds} by the human annotator but \textsc{evades} by all LLM methods. Second, very short confirmatory responses (e.g., \textit{``É, você.''} / \textit{``Yes, you.''}) are classified as \textsc{evades} despite being contextually appropriate \textsc{responds}. Third, the \textsc{partial}/\textsc{evades} boundary proves hardest: politicians who deflect by addressing adjacent sub-topics are inconsistently classified across methods.
+
+\paragraph{Task difficulty.}
+The low $\kappa$ values across all methods---including methods that use state-of-the-art LLMs---reflect the inherent difficulty of the task. Evasion detection requires integrating the pragmatic content of the question, the discursive context, and conversational implicature \cite{grice1975logic}, none of which are captured by surface-level similarity or instruction-following alone.
+
+\section{Conclusion}
+
+We presented a new annotated corpus for political evasion detection in Brazilian Portuguese and benchmarked five automatic methods. Our results show that: (1) all methods fail to reliably detect evasion ($\kappa \leq 0.146$); (2) few-shot LLM prompting outperforms zero-shot and NLI approaches; (3) model scale does not improve results in this pragmatic task; and (4) LLMs exhibit a systematic evasion bias in political discourse. These findings establish a baseline and motivate future work on linguistically-informed models for political NLP in under-resourced languages.
+
+\section*{Limitations}
+
+Our annotation was performed by a single annotator, and we do not report inter-annotator agreement. The \textsc{evades} category is underrepresented (8\% of the corpus), limiting conclusions about that class specifically. The few-shot examples were drawn from the same corpus without formal cross-validation. Finally, our results are specific to the \textit{Roda Viva} interview format and may not generalize to other political discourse genres.
+
+\section*{Acknowledgments}
+
+Omitted for anonymous review.
+
+\bibliographystyle{acl_natbib}
+\bibliography{references}
+
+\end{document}
