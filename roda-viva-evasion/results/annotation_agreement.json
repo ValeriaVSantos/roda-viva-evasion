@@ -1,0 +1,56 @@
+{
+  "items_total": 694,
+  "coverage": {
+    "zero_ratings": 7,
+    "one_rating": 6,
+    "two_ratings": 226,
+    "three_ratings": 455
+  },
+  "label_distribution": {
+    "annotator_1": {
+      "RESPONDE": 283,
+      "ESQUIVA": 28,
+      "PARCIAL": 157
+    },
+    "annotator_2": {
+      "RESPONDE": 395,
+      "ESQUIVA": 10,
+      "PARCIAL": 267
+    },
+    "annotator_3": {
+      "RESPONDE": 402,
+      "ESQUIVA": 33,
+      "PARCIAL": 248
+    }
+  },
+  "agreement": {
+    "krippendorff_alpha_nominal": 0.711883743814264,
+    "krippendorff_items": 681,
+    "fleiss_kappa_complete_items": 0.6066528663382793,
+    "fleiss_items": 455,
+    "pairwise": {
+      "annotator_1_vs_2": {
+        "n": 455,
+        "observed_agreement": 0.7714285714285715,
+        "cohen_kappa": 0.5389442095212114
+      },
+      "annotator_1_vs_3": {
+        "n": 464,
+        "observed_agreement": 0.7780172413793104,
+        "cohen_kappa": 0.5690026784023376
+      },
+      "annotator_2_vs_3": {
+        "n": 672,
+        "observed_agreement": 0.9107142857142857,
+        "cohen_kappa": 0.8222786417010473
+      }
+    }
+  },
+  "provisional_consensus": {
+    "UNANIMOUS_3_OF_3": 322,
+    "MAJORITY_2_OF_3": 132,
+    "AGREEMENT_2_OF_2": 226,
+    "INSUFFICIENT": 13,
+    "ADJUDICATION_REQUIRED": 1
+  }
+}
