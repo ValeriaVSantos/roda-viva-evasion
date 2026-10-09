@@ -1,110 +1,148 @@
-# Speech Disfluencies and LLM Confidence
+# Political Evasion Detection in Brazilian Portuguese
 
-[![ACL Anthology](https://img.shields.io/badge/ACL%20Anthology-2026.codi--1.5-5b2c6f)](https://aclanthology.org/2026.codi-1.5/)
-[![DOI](https://img.shields.io/badge/DOI-10.18653%2Fv1%2F2026.codi--1.5-blue)](https://doi.org/10.18653/v1/2026.codi-1.5)
-[![License: MIT](https://img.shields.io/badge/Code%20License-MIT-green.svg)](LICENSE)
+[![Project status: active extension](https://img.shields.io/badge/status-active%20extension-5b2c6f)](#current-status)
+[![License: MIT](https://img.shields.io/badge/code%20license-MIT-green.svg)](LICENSE)
 
-Reproducibility materials for:
-
-> Valeria Santos. 2026. **Speech Disfluencies and LLM Confidence: Length Bias and Pragmatic Insensitivity in Brazilian Portuguese.** CODI-CRAC 2026, ACL. Pages 24-28.
+An evaluation benchmark for testing whether language models can distinguish direct answers, partial answers, and evasive answers in Brazilian Portuguese political interviews.
 
 ## Why this matters
 
-Confidence estimates can look precise while responding to superficial properties of an input. This study tests whether a language model responds to pragmatic uncertainty markers in spontaneous Brazilian Portuguese or primarily to surface features such as turn length.
+Detecting political evasion is not ordinary topic classification. A system must compare the communicative goal of a journalist's question with what the interviewee addresses, partially addresses, or leaves unanswered. The task therefore tests discourse understanding rather than keyword overlap alone.
 
-The central finding is **surface-feature dominance**: after controlling for turn length, disfluency and hedge effects move in the human-expected direction but remain much smaller than the length effect.
+## Current status
 
-## Study design
+This repository contains two research stages:
 
-- **Data:** 344 turns from three interviews in the Roda Viva corpus
-- **Contrast:** faithful Conversation Analysis transcripts versus sanitized transcripts
-- **Model:** Meta-Llama-3.1-8B-Instruct with 4-bit quantization
-- **Reference signal:** a deductive proxy of epistemic commitment based on pragmatic markers
-- **Analysis:** binned divergence measures, Spearman correlations, Wilcoxon test, and multivariate OLS regression
+1. **Original benchmark:** 276 question-answer pairs labeled by one expert annotator and evaluated with five automatic methods.
+2. **Multi-annotator extension:** 694 question-answer pairs with partially overlapping judgments from three human annotators. Of these, 455 have all three human labels and 681 have at least two. Agreement analysis and adjudication are in progress.
 
-ECE and OE are used here as **divergence measures between model confidence and a discourse-pragmatic proxy**. They are not presented as classical factual-correctness calibration metrics.
+The original paper was not accepted for publication. It is retained as a transparent record of the initial experiment, not presented as a peer-reviewed publication. The multi-annotator extension is intended to address the original study's main annotation limitation.
 
-## Main results
+## Labels
 
-| Result | Faithful layer | Sanitized layer |
+- **RESPONDE / RESPONDS:** directly addresses the central communicative goal.
+- **PARCIAL / PARTIAL:** addresses the topic but leaves a key part unanswered or introduces substantial digression.
+- **ESQUIVA / EVADES:** redirects to another topic, answers a different question, or uses a rhetorical strategy that avoids the central point.
+
+The decision protocol is documented in [docs/annotation_guidelines.md](docs/annotation_guidelines.md).
+
+## Initial benchmark results
+
+These results use the original 276-item, single-annotator benchmark. They must not be interpreted as results from the multi-annotator extension.
+
+| Method | Macro F1 | Cohen's kappa |
 |---|---:|---:|
-| ECE-style divergence | 41.95 | 41.14 |
-| Overconfidence error | 4.29 | 3.31 |
-| Spearman correlation | -0.49 | -0.43 |
+| Cosine similarity | 0.347 | 0.053 |
+| NLI (mDeBERTa) | 0.217 | -0.032 |
+| Claude Haiku zero-shot | 0.257 | 0.055 |
+| Claude Haiku few-shot | 0.372 | **0.146** |
+| Claude Sonnet few-shot | **0.388** | 0.126 |
 
-The paired difference was significant in the reported Wilcoxon test (`W = 10988.50`, `p = 0.0023`). In the multivariate model, turn length was the only significant predictor (`beta_std = +14.47`, `p < 0.001`); oral disfluency markers and lexical hedges were not significant.
+All tested approaches showed low agreement with the original human labels. The LLM prompting conditions over-predicted `EVADES`, while the NLI formulation largely collapsed into `PARTIAL`. These are exploratory findings that will be re-evaluated against the adjudicated multi-annotator gold set.
 
-See the [published paper](https://aclanthology.org/2026.codi-1.5/) for the full interpretation and limitations.
+## Multi-annotator extension
+
+The agreement pipeline:
+
+- accepts missing ratings;
+- reports annotation coverage and label distributions;
+- computes nominal Krippendorff's alpha across available ratings;
+- computes pairwise Cohen's kappa and observed agreement;
+- computes Fleiss' kappa on items with all three ratings;
+- assigns a provisional majority label when at least two annotators agree;
+- flags ties and insufficiently annotated items for adjudication;
+- exports labels and identifiers without redistributing transcript text.
+
+Run it with:
+
+```bash
+python scripts/06_annotation_agreement.py \
+  --input /path/to/guia_anotacao.xlsx \
+  --output-data data/annotations_labels_only.csv \
+  --output-summary results/annotation_agreement.json
+```
+
+The source workbook is intentionally excluded from this public repository because it contains full interview text.
+
+### Preliminary agreement results
+
+| Measure | Items | Value |
+|---|---:|---:|
+| Krippendorff's alpha (nominal, available ratings) | 681 | 0.712 |
+| Fleiss' kappa (complete three-annotator subset) | 455 | 0.607 |
+| Cohen's kappa, annotators A-B | 455 | 0.539 |
+| Cohen's kappa, annotators A-C | 464 | 0.569 |
+| Cohen's kappa, annotators B-C | 672 | 0.822 |
+
+These are non-adjudicated results from the current workbook. The difference between annotator pairs is itself a quality-control finding and will guide targeted adjudication.
 
 ## Repository structure
 
 ```text
 .
-├── data/                 # Benchmark and source-derived research data
-├── docs/                 # Annotation and discourse-topic notes
-├── notebooks/            # Exploratory analyses and model audit notebooks
-├── results/              # Reported outputs and figures
-├── src/
-│   └── ece_calibration_pipeline.py
-├── tests/                # Tests for the reusable metric code
-├── CITATION.cff
-└── requirements.txt
+├── data/
+│   ├── README.md
+│   └── annotations_labels_only.csv
+├── docs/
+│   └── annotation_guidelines.md
+├── paper/                 # Initial, non-peer-reviewed manuscript
+├── results/
+│   └── annotation_agreement.json
+├── scripts/
+│   ├── 01_extract_qa_pairs.py
+│   ├── 02_method1_similarity.py
+│   ├── 03_method2_nli.py
+│   ├── 04_method3_llm.py
+│   ├── 05_evaluate.py
+│   └── 06_annotation_agreement.py
+├── tests/
+└── CITATION.cff
 ```
 
-## Quick start
+## Setup
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
-python src/ece_calibration_pipeline.py \
-  --input "results/reported_confidence_scores.csv" \
-  --output "results/reliability_diagram_reproduced.png"
 python -m unittest discover -s tests -v
 ```
 
-The notebooks document the exploratory model-inference workflow. Re-running Llama inference requires access to the model weights and hardware compatible with the quantized setup described in the paper.
+The LLM experiments require an Anthropic API key. Never commit keys or `.env` files.
 
-The command above uses the complete 344-turn result table. The shorter 95-turn CSV and Colab-oriented scripts are retained only as pilot-stage provenance.
+## Data access and licensing
 
-## Annotation proxy
+The transcripts originate from the [LeGOS-UFSCar Roda Viva corpus](https://github.com/LeGOS-UFSCar/Roda-Viva). This repository does not redistribute the full question and response text in the multi-annotator file. It publishes only source identifiers, anonymized annotator labels, coverage fields, and provisional consensus status.
 
-The epistemic-commitment proxy starts at 100 and applies hierarchical deductions:
+Code is MIT licensed. A separate license for the annotation layer should be assigned only after confirming compatibility with the upstream corpus terms.
 
-| Category | Example | Deduction |
-|---|---|---:|
-| Epistemic hedge | “maybe”, “I think” | -15 |
-| Reformulation / false start | abandoned construction | -10 |
-| Filled pause | “uh”, “um” | -5 |
-| Lengthening | prolonged vowel | -5 |
-| Repetition | repeated word or connective | -5 |
+## Ethics and interpretation
 
-This proxy is theory-driven and was annotated by one researcher. It should not be interpreted as a direct measurement of a speaker's internal mental state.
+The labels describe the relationship between a public interview question and its response. They are not claims about a person's honesty, intent, character, or factual accuracy. Models trained on political discourse may also reproduce stereotypes about politicians; the original experiments therefore require replication against the multi-annotator gold set.
 
-## Data and ethics
+## Research roadmap
 
-The study uses interviews with public figures from the [Roda Viva corpus](https://github.com/LeGOS-UFSCar/Roda-Viva). The repository contains research derivatives used for the audit. Users should consult the upstream corpus terms before redistributing transcript content.
-
-## Limitations
-
-- The benchmark contains 344 turns from one interview genre.
-- The experiment uses one autoregressive model.
-- The reference proxy was developed deductively and annotated by one researcher.
-- The regression explains approximately 29% of the confidence variance.
-- The results do not establish factual correctness or a general psychological measure of certainty.
+- [x] Build the original 276-item benchmark.
+- [x] Evaluate similarity, NLI, and prompted-LLM baselines.
+- [x] Collect an expanded annotation workbook with three annotator columns.
+- [x] Add reproducible coverage and agreement analysis.
+- [ ] Complete missing annotations or define a documented partial-coverage policy.
+- [ ] Adjudicate unresolved and high-disagreement cases.
+- [ ] Freeze a versioned gold set.
+- [ ] Split data by interview or speaker to reduce leakage.
+- [ ] Re-run all baselines against the new gold set.
+- [ ] Publish a dataset card and versioned research release.
 
 ## Citation
 
+Until a revised study is published, cite the repository rather than the rejected manuscript:
+
 ```bibtex
-@inproceedings{santos-2026-speech,
-  title     = {Speech Disfluencies and {LLM} Confidence: Length Bias and Pragmatic Insensitivity in {B}razilian {P}ortuguese},
-  author    = {Santos, Valeria},
-  booktitle = {Proceedings of the 2nd Joint Workshop on Computational Approaches to Discourse, Context and Document-Level Inferences and Computational Models of Reference, Anaphora and Coreference (CODI-CRAC 2026)},
-  pages     = {24--28},
-  year      = {2026},
-  publisher = {Association for Computational Linguistics},
-  url       = {https://aclanthology.org/2026.codi-1.5/},
-  doi       = {10.18653/v1/2026.codi-1.5}
+@software{santos2026political_evasion,
+  author = {Valeria Vieira dos Santos},
+  title  = {Political Evasion Detection in Brazilian Portuguese},
+  year   = {2026},
+  url    = {https://github.com/ValeriaVSantos/roda-viva-evasion}
 }
 ```
 
@@ -113,7 +151,3 @@ The study uses interviews with public figures from the [Roda Viva corpus](https:
 **Valeria Vieira dos Santos**<br>
 Federal University of Sao Carlos (UFSCar), Brazil<br>
 [ORCID](https://orcid.org/0009-0006-0023-6736) · [Website](https://valeriavsantos.com) · [LinkedIn](https://www.linkedin.com/in/valeriavieira-/)
-
-## License
-
-Code is released under the [MIT License](LICENSE). Source-derived linguistic data may be subject to the terms of the upstream Roda Viva corpus.
