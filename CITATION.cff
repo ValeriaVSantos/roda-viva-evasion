@@ -1,14 +1,13 @@
 cff-version: 1.2.0
-message: "If you use this dataset or code, please cite the paper below."
-title: "Can LLMs Detect Political Evasion? A Benchmark for Brazilian Portuguese Interviews"
-# NOTE (anonymous review): authors withheld until de-anonymization.
-# After acceptance, replace with real author metadata (given-names / family-names / orcid).
+message: "If you use this code or annotation framework, please cite this repository."
+title: "Political Evasion Detection in Brazilian Portuguese"
+type: software
 authors:
-  - name: "Anonymous"
-preferred-citation:
-  type: conference-paper
-  title: "Can LLMs Detect Political Evasion? A Benchmark for Brazilian Portuguese Interviews"
-  authors:
-    - name: "Anonymous"
-  collection-title: "Proceedings of the 9th International Conference on Natural Language and Speech Processing (ICNLSP 2026)"
-  year: 2026
+  - given-names: "Valeria Vieira"
+    family-names: "dos Santos"
+    orcid: "https://orcid.org/0009-0006-0023-6736"
+repository-code: "https://github.com/ValeriaVSantos/roda-viva-evasion"
+url: "https://valeriavsantos.com"
+license: MIT
+version: "0.2.0"
+date-released: "2026-10-09"
