@@ -1,0 +1,2 @@
+Avalie se o político que respondeu à pergunta na entrevista abaixo respondeu aos pontos principais integralmente (RESPONDE), parcialmente (PARCIAL) ou não respondeu (ESQUIVA).
+Responda APENAS com um objeto JSON válido contendo a chave "rotulo" com um dos valores exatos: "RESPONDE", "PARCIAL" ou "ESQUIVA".

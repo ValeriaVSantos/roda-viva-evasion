@@ -1,0 +1,31 @@
+{
+  "prepared_on": "2026-11-05",
+  "source_repository": "https://github.com/ValeriaVSantos/roda-viva-evasion",
+  "source_repository_head": "95058f859183b649f9218dfc5e15f1f73a75e25b",
+  "source_colab": "https://colab.research.google.com/drive/14HXEOpc6J1oOmvvmCBsOS7KdyAM081t1",
+  "source_colab_modified_time": "2026-11-05T17:01:08.811Z",
+  "original_notebook_sha256": "9dc9c2f8065fba5073a9a44efecd36a58ac1ea68351ef827f7d6f7ead17330e9",
+  "source_predictions_filename": "resultados_anotacao_llms (1).csv",
+  "source_predictions_sha256": "cd829c16369738a4d5d1690ea1b1bf471d0ed2f1ae93a0659742b9fddcb51e7f",
+  "public_snapshot_sha256": "67955bb7554bc81806a2dea1a7c8d521566d8ca849238160da471f0c6dd8c04b",
+  "prompt_sha256": {
+    "guided_with_examples.txt": "6a969bd071fff8dac7de45cc08676f8976dcda898a0d63805ed943bd9a749ab5",
+    "guided_without_examples.txt": "3ab2a2132f9d9cdb99f1c48ec232e29f5de665e8a8ee3265a7ccb9529bf7d5a2",
+    "simple.txt": "e788056c83a3444def3367b63e013720a593b7b91920e466ec355bb721056100"
+  },
+  "historical_model_id_in_code": "qwen/qwen3.8-27b",
+  "historical_temperature_in_code": 0.0,
+  "historical_response_format_in_code": {
+    "type": "json_object"
+  },
+  "historical_guided_prompt_per_item": "not recorded; source contains with-examples and without-examples variants",
+  "sanitization": {
+    "credential_assignments_removed": 3,
+    "outputs_removed": true,
+    "execution_counts_cleared": true,
+    "cell_metadata_cleared": true,
+    "full_interview_text_in_public_data": false,
+    "model_explanations_in_public_data": false
+  },
+  "new_api_calls_during_packaging": 0
+}

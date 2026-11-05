@@ -1,0 +1,3 @@
+# Optional. Offline metrics require Python 3.10+ only, with no package installation.
+# Record the installed Groq version in each new run manifest.
+groq

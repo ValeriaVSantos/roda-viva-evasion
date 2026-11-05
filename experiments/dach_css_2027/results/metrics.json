@@ -1,0 +1,380 @@
+{
+  "input_sha256": "67955bb7554bc81806a2dea1a7c8d521566d8ca849238160da471f0c6dd8c04b",
+  "labels": [
+    "RESPONDE",
+    "PARCIAL",
+    "ESQUIVA"
+  ],
+  "reference_policy": "At least two matching valid human votes; no forced tie-breaking.",
+  "prediction_policy": "Use identical items with valid labels in both Qwen columns.",
+  "historical_guided_prompt_variant": "Unknown per item: two variants occur in source Colab.",
+  "corpus": {
+    "n": 694,
+    "n_interviews": 11,
+    "human_vote_coverage": {
+      "0": 7,
+      "1": 6,
+      "2": 226,
+      "3": 455
+    },
+    "triple_unanimous": 322,
+    "triple_unanimity_rate": 0.7076923076923077
+  },
+  "subsets": {
+    "paired_available_majority": {
+      "n": 248,
+      "human_vote_coverage": {
+        "3": 239,
+        "2": 9
+      },
+      "interview_coverage": {
+        "Alexandre de Moraes": 56,
+        "Anthony Garotinho": 80,
+        "Aécio Neves": 38,
+        "Ciro Gomes": 33,
+        "Fernando Collor de Mello": 39,
+        "José Dirceu": 2
+      },
+      "conditions": {
+        "simple": {
+          "n": 248,
+          "accuracy": 0.33064516129032256,
+          "cohen_kappa": 0.1158645276292335,
+          "macro_f1": 0.30528852323724115,
+          "label_order": [
+            "RESPONDE",
+            "PARCIAL",
+            "ESQUIVA"
+          ],
+          "confusion_matrix": [
+            [
+              50,
+              30,
+              79
+            ],
+            [
+              7,
+              12,
+              50
+            ],
+            [
+              0,
+              0,
+              20
+            ]
+          ],
+          "per_class": {
+            "RESPONDE": {
+              "precision": 0.8771929824561403,
+              "recall": 0.31446540880503143,
+              "f1": 0.46296296296296297,
+              "support": 159,
+              "predicted_count": 57
+            },
+            "PARCIAL": {
+              "precision": 0.2857142857142857,
+              "recall": 0.17391304347826086,
+              "f1": 0.2162162162162162,
+              "support": 69,
+              "predicted_count": 42
+            },
+            "ESQUIVA": {
+              "precision": 0.1342281879194631,
+              "recall": 1.0,
+              "f1": 0.23668639053254437,
+              "support": 20,
+              "predicted_count": 149
+            }
+          }
+        },
+        "guided_historical": {
+          "n": 248,
+          "accuracy": 0.6854838709677419,
+          "cohen_kappa": 0.41541251133272883,
+          "macro_f1": 0.5840502345026177,
+          "label_order": [
+            "RESPONDE",
+            "PARCIAL",
+            "ESQUIVA"
+          ],
+          "confusion_matrix": [
+            [
+              122,
+              28,
+              9
+            ],
+            [
+              20,
+              37,
+              12
+            ],
+            [
+              1,
+              8,
+              11
+            ]
+          ],
+          "per_class": {
+            "RESPONDE": {
+              "precision": 0.8531468531468531,
+              "recall": 0.7672955974842768,
+              "f1": 0.8079470198675497,
+              "support": 159,
+              "predicted_count": 143
+            },
+            "PARCIAL": {
+              "precision": 0.5068493150684932,
+              "recall": 0.5362318840579711,
+              "f1": 0.5211267605633804,
+              "support": 69,
+              "predicted_count": 73
+            },
+            "ESQUIVA": {
+              "precision": 0.34375,
+              "recall": 0.55,
+              "f1": 0.42307692307692313,
+              "support": 20,
+              "predicted_count": 32
+            }
+          }
+        }
+      }
+    },
+    "paired_triple_votes": {
+      "n": 239,
+      "human_vote_coverage": {
+        "3": 239
+      },
+      "interview_coverage": {
+        "Alexandre de Moraes": 54,
+        "Anthony Garotinho": 76,
+        "Aécio Neves": 37,
+        "Ciro Gomes": 31,
+        "Fernando Collor de Mello": 39,
+        "José Dirceu": 2
+      },
+      "conditions": {
+        "simple": {
+          "n": 239,
+          "accuracy": 0.3138075313807531,
+          "cohen_kappa": 0.09736551215917463,
+          "macro_f1": 0.2843603632414569,
+          "label_order": [
+            "RESPONDE",
+            "PARCIAL",
+            "ESQUIVA"
+          ],
+          "confusion_matrix": [
+            [
+              50,
+              30,
+              79
+            ],
+            [
+              7,
+              12,
+              48
+            ],
+            [
+              0,
+              0,
+              13
+            ]
+          ],
+          "per_class": {
+            "RESPONDE": {
+              "precision": 0.8771929824561403,
+              "recall": 0.31446540880503143,
+              "f1": 0.46296296296296297,
+              "support": 159,
+              "predicted_count": 57
+            },
+            "PARCIAL": {
+              "precision": 0.2857142857142857,
+              "recall": 0.1791044776119403,
+              "f1": 0.2201834862385321,
+              "support": 67,
+              "predicted_count": 42
+            },
+            "ESQUIVA": {
+              "precision": 0.09285714285714286,
+              "recall": 1.0,
+              "f1": 0.1699346405228758,
+              "support": 13,
+              "predicted_count": 140
+            }
+          }
+        },
+        "guided_historical": {
+          "n": 239,
+          "accuracy": 0.6820083682008368,
+          "cohen_kappa": 0.3801105726571564,
+          "macro_f1": 0.5309480150130581,
+          "label_order": [
+            "RESPONDE",
+            "PARCIAL",
+            "ESQUIVA"
+          ],
+          "confusion_matrix": [
+            [
+              122,
+              28,
+              9
+            ],
+            [
+              20,
+              36,
+              11
+            ],
+            [
+              1,
+              7,
+              5
+            ]
+          ],
+          "per_class": {
+            "RESPONDE": {
+              "precision": 0.8531468531468531,
+              "recall": 0.7672955974842768,
+              "f1": 0.8079470198675497,
+              "support": 159,
+              "predicted_count": 143
+            },
+            "PARCIAL": {
+              "precision": 0.5070422535211268,
+              "recall": 0.5373134328358209,
+              "f1": 0.5217391304347826,
+              "support": 67,
+              "predicted_count": 71
+            },
+            "ESQUIVA": {
+              "precision": 0.2,
+              "recall": 0.38461538461538464,
+              "f1": 0.2631578947368421,
+              "support": 13,
+              "predicted_count": 25
+            }
+          }
+        }
+      }
+    },
+    "paired_excluding_aecio": {
+      "n": 210,
+      "human_vote_coverage": {
+        "3": 202,
+        "2": 8
+      },
+      "interview_coverage": {
+        "Alexandre de Moraes": 56,
+        "Anthony Garotinho": 80,
+        "Ciro Gomes": 33,
+        "Fernando Collor de Mello": 39,
+        "José Dirceu": 2
+      },
+      "conditions": {
+        "simple": {
+          "n": 210,
+          "accuracy": 0.319047619047619,
+          "cohen_kappa": 0.10728618567733877,
+          "macro_f1": 0.28659670406430227,
+          "label_order": [
+            "RESPONDE",
+            "PARCIAL",
+            "ESQUIVA"
+          ],
+          "confusion_matrix": [
+            [
+              44,
+              23,
+              70
+            ],
+            [
+              5,
+              8,
+              45
+            ],
+            [
+              0,
+              0,
+              15
+            ]
+          ],
+          "per_class": {
+            "RESPONDE": {
+              "precision": 0.8979591836734694,
+              "recall": 0.32116788321167883,
+              "f1": 0.47311827956989244,
+              "support": 137,
+              "predicted_count": 49
+            },
+            "PARCIAL": {
+              "precision": 0.25806451612903225,
+              "recall": 0.13793103448275862,
+              "f1": 0.1797752808988764,
+              "support": 58,
+              "predicted_count": 31
+            },
+            "ESQUIVA": {
+              "precision": 0.11538461538461539,
+              "recall": 1.0,
+              "f1": 0.20689655172413793,
+              "support": 15,
+              "predicted_count": 130
+            }
+          }
+        },
+        "guided_historical": {
+          "n": 210,
+          "accuracy": 0.7,
+          "cohen_kappa": 0.44516670161459415,
+          "macro_f1": 0.5955868848916978,
+          "label_order": [
+            "RESPONDE",
+            "PARCIAL",
+            "ESQUIVA"
+          ],
+          "confusion_matrix": [
+            [
+              104,
+              24,
+              9
+            ],
+            [
+              13,
+              34,
+              11
+            ],
+            [
+              1,
+              5,
+              9
+            ]
+          ],
+          "per_class": {
+            "RESPONDE": {
+              "precision": 0.8813559322033898,
+              "recall": 0.7591240875912408,
+              "f1": 0.815686274509804,
+              "support": 137,
+              "predicted_count": 118
+            },
+            "PARCIAL": {
+              "precision": 0.5396825396825397,
+              "recall": 0.5862068965517241,
+              "f1": 0.5619834710743802,
+              "support": 58,
+              "predicted_count": 63
+            },
+            "ESQUIVA": {
+              "precision": 0.3103448275862069,
+              "recall": 0.6,
+              "f1": 0.4090909090909091,
+              "support": 15,
+              "predicted_count": 29
+            }
+          }
+        }
+      }
+    }
+  }
+}
